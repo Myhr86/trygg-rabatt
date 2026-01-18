@@ -14,7 +14,159 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alternatives: {
+        Row: {
+          action_label: string | null
+          action_url: string | null
+          created_at: string | null
+          description: string
+          id: string
+          store_id: string
+          title: string
+          type: string
+        }
+        Insert: {
+          action_label?: string | null
+          action_url?: string | null
+          created_at?: string | null
+          description: string
+          id?: string
+          store_id: string
+          title: string
+          type: string
+        }
+        Update: {
+          action_label?: string | null
+          action_url?: string | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          store_id?: string
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alternatives_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      code_reports: {
+        Row: {
+          code_id: string
+          id: string
+          reported_at: string | null
+          user_context: Json | null
+          worked: boolean
+        }
+        Insert: {
+          code_id: string
+          id?: string
+          reported_at?: string | null
+          user_context?: Json | null
+          worked: boolean
+        }
+        Update: {
+          code_id?: string
+          id?: string
+          reported_at?: string | null
+          user_context?: Json | null
+          worked?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "code_reports_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "discount_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discount_codes: {
+        Row: {
+          code: string
+          context: string[] | null
+          created_at: string | null
+          description: string
+          id: string
+          is_active: boolean | null
+          last_verified: string | null
+          probability: number
+          savings: string | null
+          store_id: string
+          trust_level: string
+          valid_until: string | null
+        }
+        Insert: {
+          code: string
+          context?: string[] | null
+          created_at?: string | null
+          description: string
+          id: string
+          is_active?: boolean | null
+          last_verified?: string | null
+          probability: number
+          savings?: string | null
+          store_id: string
+          trust_level: string
+          valid_until?: string | null
+        }
+        Update: {
+          code?: string
+          context?: string[] | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          is_active?: boolean | null
+          last_verified?: string | null
+          probability?: number
+          savings?: string | null
+          store_id?: string
+          trust_level?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discount_codes_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stores: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          last_updated: string | null
+          logo: string | null
+          name: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id: string
+          last_updated?: string | null
+          logo?: string | null
+          name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          last_updated?: string | null
+          logo?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
