@@ -1,1 +1,7 @@
 project_id = "oidjcwcjhwpzfiydblqk"
+
+[api]
+enabled = true
+
+[functions.daily-update]
+verify_jwt = false
