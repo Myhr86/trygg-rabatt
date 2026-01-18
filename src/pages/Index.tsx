@@ -4,8 +4,9 @@ import { SearchInput } from '@/components/SearchInput';
 import { StoreCard } from '@/components/StoreCard';
 import { StoreDetail } from '@/components/StoreDetail';
 import { TrustIndicator } from '@/components/TrustIndicator';
-import { stores, searchStores } from '@/data/stores';
+import { useStores, useSearchStores } from '@/hooks/useStores';
 import { Store, UserContext } from '@/types/discount';
+import { Loader2 } from 'lucide-react';
 
 const defaultContext: UserContext = {
   customerType: 'unknown',
@@ -19,15 +20,13 @@ const Index = () => {
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [userContext, setUserContext] = useState<UserContext>(defaultContext);
 
-  const filteredStores = useMemo(
-    () => searchStores(searchQuery),
-    [searchQuery]
-  );
+  const { data: stores = [], isLoading, error } = useStores();
+  const filteredStores = useSearchStores(searchQuery, stores);
 
   const categories = useMemo(() => {
     const cats = new Set(stores.map((s) => s.category));
     return Array.from(cats);
-  }, []);
+  }, [stores]);
 
   if (selectedStore) {
     return (
@@ -40,6 +39,33 @@ const Index = () => {
             onContextChange={setUserContext}
             onBack={() => setSelectedStore(null)}
           />
+        </main>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container py-6 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Laster butikker...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container py-6">
+          <div className="text-center py-12">
+            <p className="text-destructive">Kunne ikke laste butikker. Prøv igjen senere.</p>
+          </div>
         </main>
       </div>
     );
