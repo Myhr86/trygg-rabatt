@@ -22,6 +22,7 @@ interface DbDiscountCode {
   last_verified: string;
   savings: string | null;
   is_active: boolean;
+  affiliate_url: string | null;
 }
 
 interface DbAlternative {
@@ -45,6 +46,7 @@ function mapDbCodeToCode(dbCode: DbDiscountCode): DiscountCode {
     validUntil: dbCode.valid_until || undefined,
     lastVerified: dbCode.last_verified,
     savings: dbCode.savings || undefined,
+    affiliateUrl: dbCode.affiliate_url || undefined,
   };
 }
 

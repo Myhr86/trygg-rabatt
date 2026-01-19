@@ -4,6 +4,7 @@ import { SearchInput } from '@/components/SearchInput';
 import { StoreCard } from '@/components/StoreCard';
 import { StoreDetail } from '@/components/StoreDetail';
 import { TrustIndicator } from '@/components/TrustIndicator';
+import { AffiliateDisclosure } from '@/components/AffiliateDisclosure';
 import { useStores, useSearchStores } from '@/hooks/useStores';
 import { Store, UserContext } from '@/types/discount';
 import { Loader2 } from 'lucide-react';
@@ -145,8 +146,13 @@ const Index = () => {
           </div>
         )}
 
+        {/* Affiliate disclosure */}
+        <div className="mt-12">
+          <AffiliateDisclosure />
+        </div>
+
         {/* Footer info */}
-        <footer className="mt-12 pt-8 border-t border-border">
+        <footer className="mt-8 pt-8 border-t border-border">
           <div className="text-center text-sm text-muted-foreground space-y-2">
             <p>
               <strong className="text-foreground">Hvordan fungerer det?</strong>
