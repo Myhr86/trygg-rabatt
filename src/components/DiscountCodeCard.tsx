@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, ExternalLink } from 'lucide-react';
 import { DiscountCode } from '@/types/discount';
 import { ProbabilityRing } from './ProbabilityRing';
 import { ContextBadge } from './ContextBadge';
@@ -68,6 +68,18 @@ export function DiscountCodeCard({ code, storeName }: DiscountCodeCardProps) {
                 </>
               )}
             </button>
+            
+            {code.affiliateUrl && (
+              <a
+                href={code.affiliateUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Gå til butikk
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
             
             <span className="text-xs text-muted-foreground">
               Verifisert {code.lastVerified}

@@ -21,6 +21,7 @@ export interface DiscountCode {
   validUntil?: string;
   lastVerified: string;
   savings?: string; // e.g., '10%' or '100 kr'
+  affiliateUrl?: string; // Optional affiliate link - only shown when code is best choice for user
 }
 
 export interface Store {

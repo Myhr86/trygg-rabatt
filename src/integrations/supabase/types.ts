@@ -89,6 +89,7 @@ export type Database = {
       }
       discount_codes: {
         Row: {
+          affiliate_url: string | null
           code: string
           context: string[] | null
           created_at: string | null
@@ -103,6 +104,7 @@ export type Database = {
           valid_until: string | null
         }
         Insert: {
+          affiliate_url?: string | null
           code: string
           context?: string[] | null
           created_at?: string | null
@@ -117,6 +119,7 @@ export type Database = {
           valid_until?: string | null
         }
         Update: {
+          affiliate_url?: string | null
           code?: string
           context?: string[] | null
           created_at?: string | null
