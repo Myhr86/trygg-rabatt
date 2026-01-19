@@ -62,12 +62,34 @@ This project is built with:
 
 ## How can I deploy this project?
 
+**Deploy to Netlify**
+
+This project is configured for Netlify deployment. Follow these steps:
+
+1. **Push your code to GitHub** (if not already done)
+
+2. **Connect to Netlify:**
+   - Go to [Netlify](https://www.netlify.com/)
+   - Click "Add new site" > "Import an existing project"
+   - Connect your GitHub repository
+   - Netlify will automatically detect the build settings from `netlify.toml`
+
+3. **Set Environment Variables:**
+   - In Netlify, go to Site settings > Environment variables
+   - Add the following variables:
+     - `VITE_SUPABASE_URL` - Your Supabase project URL
+     - `VITE_SUPABASE_PUBLISHABLE_KEY` - Your Supabase anon/public key
+   - You can find these in your Supabase project settings under API
+
+4. **Deploy:**
+   - Netlify will automatically build and deploy your site
+   - The build command is: `npm run build`
+   - Publish directory is: `dist`
+
+5. **Configure Custom Domain (optional):**
+   - In Netlify, go to Site settings > Domain management
+   - Click "Add custom domain" and follow the instructions
+
+**Alternative: Deploy via Lovable**
+
 Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
