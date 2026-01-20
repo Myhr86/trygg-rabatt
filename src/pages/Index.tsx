@@ -4,10 +4,12 @@ import { SearchInput } from '@/components/SearchInput';
 import { StoreCard } from '@/components/StoreCard';
 import { StoreDetail } from '@/components/StoreDetail';
 import { TrustIndicator } from '@/components/TrustIndicator';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 import { useStores, useSearchStores } from '@/hooks/useStores';
 import { Store, UserContext } from '@/types/discount';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Tag } from 'lucide-react';
 
 const defaultContext: UserContext = {
   customerType: 'unknown',
@@ -20,13 +22,24 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [userContext, setUserContext] = useState<UserContext>(defaultContext);
+  const [showOnlyWithCodes, setShowOnlyWithCodes] = useState(false);
 
   const { data: stores = [], isLoading, error } = useStores();
-  const filteredStores = useSearchStores(searchQuery, stores);
+  const searchedStores = useSearchStores(searchQuery, stores);
+  
+  // Apply "has codes" filter
+  const filteredStores = useMemo(() => {
+    if (!showOnlyWithCodes) return searchedStores;
+    return searchedStores.filter((store) => store.codes.length > 0);
+  }, [searchedStores, showOnlyWithCodes]);
 
   const categories = useMemo(() => {
-    const cats = new Set(stores.map((s) => s.category));
+    const cats = new Set(filteredStores.map((s) => s.category));
     return Array.from(cats);
+  }, [filteredStores]);
+  
+  const storesWithCodesCount = useMemo(() => {
+    return stores.filter((s) => s.codes.length > 0).length;
   }, [stores]);
 
   if (selectedStore) {
@@ -90,13 +103,30 @@ const Index = () => {
         {/* Trust indicator */}
         <TrustIndicator />
 
-        {/* Search */}
-        <div className="mb-8">
+        {/* Search and filter */}
+        <div className="mb-8 space-y-4">
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Søk etter butikk (f.eks. Zalando, Elkjøp...)"
           />
+          
+          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center gap-2">
+              <Tag className="h-4 w-4 text-primary" />
+              <Label htmlFor="show-codes-filter" className="text-sm font-medium cursor-pointer">
+                Vis kun butikker med rabattkode
+              </Label>
+              <span className="text-xs text-muted-foreground">
+                ({storesWithCodesCount} butikker)
+              </span>
+            </div>
+            <Switch
+              id="show-codes-filter"
+              checked={showOnlyWithCodes}
+              onCheckedChange={setShowOnlyWithCodes}
+            />
+          </div>
         </div>
 
         {/* Results */}
@@ -125,7 +155,7 @@ const Index = () => {
         ) : (
           <div>
             {categories.map((category) => {
-              const categoryStores = stores.filter((s) => s.category === category);
+              const categoryStores = filteredStores.filter((s) => s.category === category);
               return (
                 <div key={category} className="mb-8">
                   <h2 className="text-lg font-semibold text-foreground mb-3">
