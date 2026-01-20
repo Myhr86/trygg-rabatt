@@ -5,3 +5,15 @@ enabled = true
 
 [functions.daily-update]
 verify_jwt = false
+
+[functions.scrape-discount-codes]
+verify_jwt = false
+
+[functions.check-subscription]
+verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.customer-portal]
+verify_jwt = false
