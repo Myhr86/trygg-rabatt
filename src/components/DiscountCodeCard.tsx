@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Copy, Check, ExternalLink } from 'lucide-react';
+import { Copy, Check, ExternalLink, ShieldCheck, Crown } from 'lucide-react';
 import { DiscountCode } from '@/types/discount';
 import { ProbabilityRing } from './ProbabilityRing';
 import { ContextBadge } from './ContextBadge';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 interface DiscountCodeCardProps {
   code: DiscountCode;
@@ -12,12 +14,17 @@ interface DiscountCodeCardProps {
 
 export function DiscountCodeCard({ code, storeName }: DiscountCodeCardProps) {
   const [copied, setCopied] = useState(false);
+  const { subscription } = useAuth();
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code.code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // For Premium users: show live verified status
+  // In a real implementation, this would come from a real-time verification API
+  const isHighProbability = code.probability >= 80;
 
   return (
     <div className="group bg-card rounded-lg border border-border p-4 shadow-soft hover:shadow-soft-lg transition-all duration-200 animate-fade-in">
@@ -38,6 +45,33 @@ export function DiscountCodeCard({ code, storeName }: DiscountCodeCardProps) {
                 </p>
               )}
             </div>
+            
+            {/* Premium live status badge */}
+            {subscription.subscribed && (
+              <Badge 
+                variant="outline" 
+                className={cn(
+                  'shrink-0 text-xs gap-1',
+                  isHighProbability 
+                    ? 'border-trust-high/30 text-trust-high bg-trust-high/5' 
+                    : 'border-amber-500/30 text-amber-600 bg-amber-500/5'
+                )}
+              >
+                <ShieldCheck className="h-3 w-3" />
+                {isHighProbability ? 'Live: Fungerer' : 'Live: Usikker'}
+              </Badge>
+            )}
+            
+            {/* Show Premium upsell hint for non-subscribers */}
+            {!subscription.subscribed && code.probability >= 70 && (
+              <Badge 
+                variant="outline" 
+                className="shrink-0 text-xs gap-1 border-primary/30 text-primary/70"
+              >
+                <Crown className="h-3 w-3" />
+                Premium: Live status
+              </Badge>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-2">
@@ -46,7 +80,7 @@ export function DiscountCodeCard({ code, storeName }: DiscountCodeCardProps) {
             ))}
           </div>
 
-          <div className="flex items-center gap-3 mt-3">
+          <div className="flex items-center gap-3 mt-3 flex-wrap">
             <button
               onClick={handleCopy}
               className={cn(
@@ -82,7 +116,7 @@ export function DiscountCodeCard({ code, storeName }: DiscountCodeCardProps) {
             )}
             
             <span className="text-xs text-muted-foreground">
-              Verifisert {code.lastVerified}
+              {subscription.subscribed ? 'Sist sjekket' : 'Verifisert'} {code.lastVerified}
             </span>
           </div>
         </div>
