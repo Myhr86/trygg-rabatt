@@ -79,19 +79,25 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = validSubscriptions[0];
+      
+      // Get period end from subscription items (Stripe API v2025 structure)
+      const firstItem = subscription.items?.data?.[0];
+      const periodEnd = firstItem?.current_period_end || subscription.current_period_end;
+      
       logStep("Processing subscription", { 
         id: subscription.id,
         status: subscription.status,
-        current_period_end: subscription.current_period_end,
-        current_period_end_type: typeof subscription.current_period_end
+        item_period_end: firstItem?.current_period_end,
+        sub_period_end: subscription.current_period_end,
+        period_end_used: periodEnd
       });
       
       // Handle the period end - it should be a Unix timestamp in seconds
-      if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
-        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      if (periodEnd && typeof periodEnd === 'number') {
+        subscriptionEnd = new Date(periodEnd * 1000).toISOString();
       }
       
-      billingInterval = subscription.items?.data?.[0]?.price?.recurring?.interval || null;
+      billingInterval = firstItem?.price?.recurring?.interval || null;
       logStep("Active/trial subscription found", { 
         subscriptionId: subscription.id, 
         status: subscription.status,
