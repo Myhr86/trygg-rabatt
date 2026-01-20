@@ -24,7 +24,28 @@ Deno.serve(async (req) => {
 
     console.log('Starting daily update job...');
 
-    // 1. Deactivate expired codes
+    // 1. Trigger discount code scraping (runs in background)
+    console.log('Triggering discount code scraping...');
+    try {
+      const scrapeResponse = await fetch(`${supabaseUrl}/functions/v1/scrape-discount-codes`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseServiceKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (scrapeResponse.ok) {
+        const scrapeResult = await scrapeResponse.json();
+        console.log('Scraping result:', scrapeResult);
+      } else {
+        console.error('Scraping failed:', await scrapeResponse.text());
+      }
+    } catch (scrapeError) {
+      console.error('Error triggering scraping:', scrapeError);
+    }
+
+    // 2. Deactivate expired codes
     const { data: expiredCodes, error: expireError } = await supabase
       .from('discount_codes')
       .update({ is_active: false })
@@ -38,7 +59,7 @@ Deno.serve(async (req) => {
       console.log(`Deactivated ${expiredCodes?.length || 0} expired codes`);
     }
 
-    // 2. Update probabilities based on recent reports (last 7 days)
+    // 3. Update probabilities based on recent reports (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -112,7 +133,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 3. Update store timestamps for stores with changes
+    // 4. Update store timestamps for stores with changes
     const { error: timestampError } = await supabase.rpc('update_all_store_timestamps');
     
     // This RPC might not exist, so we handle it gracefully
