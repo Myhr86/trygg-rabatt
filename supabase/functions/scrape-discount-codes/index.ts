@@ -7,31 +7,122 @@ const corsHeaders = {
 
 // Known discount code aggregator sites for Norwegian stores
 const DISCOUNT_SOURCES: Record<string, string[]> = {
+  // Barn & baby
   jollyroom: [
     'https://www.cuponation.no/jollyroom-rabattkode',
     'https://kickback.no/rabattkode/jollyroom',
   ],
+  elefun: [
+    'https://www.cuponation.no/elefun-rabattkoder',
+    'https://kickback.no/rabattkode/elefun',
+  ],
+  lekekassen: [
+    'https://kickback.no/rabattkode/lekekassen',
+  ],
+  wee: [
+    'https://kickback.no/rabattkode/wee',
+  ],
+  
+  // Helse & skjønnhet
   blivakker: [
     'https://www.cuponation.no/blivakker-rabattkoder',
     'https://kickback.no/rabattkode/blivakker',
   ],
-  fjellsport: [
-    'https://www.cuponation.no/fjellsport-rabattkoder',
-    'https://kickback.no/rabattkode/fjellsport',
+  lyko: [
+    'https://www.cuponation.no/lyko-rabattkoder',
+    'https://kickback.no/rabattkode/lyko',
   ],
-  ellos: [
-    'https://www.cuponation.no/ellos-rabattkoder',
-    'https://kickback.no/rabattkode/ellos',
+  vita: [
+    'https://www.cuponation.no/vita-rabattkoder',
+    'https://kickback.no/rabattkode/vita',
   ],
-  getinspired: [
-    'https://kickback.no/rabattkode/get-inspired',
+  sephora: [
+    'https://www.cuponation.no/sephora-rabattkoder',
+    'https://kickback.no/rabattkode/sephora',
   ],
   farmasiet: [
     'https://www.cuponation.no/farmasiet',
     'https://kickback.no/rabattkode/farmasiet',
   ],
-  mytrendyphone: [
-    'https://kickback.no/rabattkode/mytrendyphone',
+  apotek1: [
+    'https://www.cuponation.no/apotek1-rabattkoder',
+    'https://kickback.no/rabattkode/apotek1',
+  ],
+  staypro: [
+    'https://www.cuponation.no/staypro-rabattkoder',
+    'https://kickback.no/rabattkode/staypro',
+  ],
+  blush: [
+    'https://www.cuponation.no/blush-rabattkoder',
+    'https://kickback.no/rabattkode/blush',
+  ],
+  kondomeriet: [
+    'https://www.cuponation.no/kondomeriet-rabattkoder',
+    'https://kickback.no/rabattkode/kondomeriet',
+  ],
+  
+  // Sport & friluft
+  fjellsport: [
+    'https://www.cuponation.no/fjellsport-rabattkoder',
+    'https://kickback.no/rabattkode/fjellsport',
+  ],
+  getinspired: [
+    'https://kickback.no/rabattkode/get-inspired',
+  ],
+  xxl: [
+    'https://www.cuponation.no/xxl-rabattkoder',
+    'https://kickback.no/rabattkode/xxl',
+  ],
+  gymshark: [
+    'https://www.cuponation.no/gymshark-rabattkoder',
+    'https://kickback.no/rabattkode/gymshark',
+  ],
+  hellyhansen: [
+    'https://www.cuponation.no/helly-hansen-rabattkoder',
+    'https://kickback.no/rabattkode/helly-hansen',
+  ],
+  
+  // Klær & sko
+  zalando: [
+    'https://www.cuponation.no/zalando-rabattkoder',
+    'https://kickback.no/rabattkode/zalando',
+  ],
+  boozt: [
+    'https://www.cuponation.no/boozt-rabattkoder',
+    'https://kickback.no/rabattkode/boozt',
+  ],
+  nelly: [
+    'https://www.cuponation.no/nelly-rabattkoder',
+    'https://kickback.no/rabattkode/nelly',
+  ],
+  hm: [
+    'https://www.cuponation.no/hm-rabattkoder',
+  ],
+  ellos: [
+    'https://www.cuponation.no/ellos-rabattkoder',
+    'https://kickback.no/rabattkode/ellos',
+  ],
+  nakd: [
+    'https://www.cuponation.no/nakd-rabattkoder',
+    'https://kickback.no/rabattkode/nakd',
+  ],
+  shein: [
+    'https://www.cuponation.no/shein',
+    'https://kickback.no/rabattkode/shein',
+  ],
+  
+  // Elektronikk
+  elkjop: [
+    'https://www.cuponation.no/elkjop-rabattkoder',
+    'https://kickback.no/rabattkode/elkjop',
+  ],
+  komplett: [
+    'https://www.cuponation.no/komplett-rabattkoder',
+    'https://kickback.no/rabattkode/komplett',
+  ],
+  power: [
+    'https://www.cuponation.no/power-rabattkoder',
+    'https://kickback.no/rabattkode/power',
   ],
   proshop: [
     'https://www.cuponation.no/proshop-rabattkoder',
@@ -40,34 +131,93 @@ const DISCOUNT_SOURCES: Record<string, string[]> = {
   dustin: [
     'https://kickback.no/rabattkode/dustin-home',
   ],
-  zalando: [
-    'https://www.cuponation.no/zalando-rabattkoder',
-    'https://kickback.no/rabattkode/zalando',
+  mytrendyphone: [
+    'https://kickback.no/rabattkode/mytrendyphone',
   ],
-  elkjop: [
-    'https://www.cuponation.no/elkjop-rabattkoder',
-    'https://kickback.no/rabattkode/elkjop',
+  netonnet: [
+    'https://www.cuponation.no/netonnet-rabattkoder',
+    'https://kickback.no/rabattkode/netonnet',
   ],
-  hm: [
-    'https://www.cuponation.no/hm-rabattkoder',
+  samsung: [
+    'https://www.cuponation.no/samsung-rabattkoder',
+    'https://kickback.no/rabattkode/samsung',
   ],
-  boozt: [
-    'https://www.cuponation.no/boozt-rabattkoder',
-    'https://kickback.no/rabattkode/boozt',
+  dyson: [
+    'https://www.cuponation.no/dyson-rabattkoder',
+    'https://kickback.no/rabattkode/dyson',
   ],
-  komplett: [
-    'https://www.cuponation.no/komplett-rabattkoder',
-    'https://kickback.no/rabattkode/komplett',
-  ],
-  xxl: [
-    'https://www.cuponation.no/xxl-rabattkoder',
-    'https://kickback.no/rabattkode/xxl',
-  ],
-  power: [
-    'https://www.cuponation.no/power-rabattkoder',
-  ],
+  
+  // Hjem & hage
   ikea: [
     'https://www.cuponation.no/ikea-rabattkoder',
+  ],
+  clasohlson: [
+    'https://www.cuponation.no/clas-ohlson-rabattkoder',
+    'https://kickback.no/rabattkode/clas-ohlson',
+  ],
+  jula: [
+    'https://www.cuponation.no/jula-rabattkoder',
+    'https://kickback.no/rabattkode/jula',
+  ],
+  plantasjen: [
+    'https://www.cuponation.no/plantasjen-rabattkoder',
+    'https://kickback.no/rabattkode/plantasjen',
+  ],
+  byggmax: [
+    'https://www.cuponation.no/byggmax-rabattkoder',
+    'https://kickback.no/rabattkode/byggmax',
+  ],
+  
+  // Mat & levering
+  foodora: [
+    'https://www.cuponation.no/foodora-rabattkoder',
+    'https://kickback.no/rabattkode/foodora',
+  ],
+  wolt: [
+    'https://www.cuponation.no/wolt-rabattkoder',
+    'https://kickback.no/rabattkode/wolt',
+  ],
+  morgenlevering: [
+    'https://www.cuponation.no/morgenlevering-rabattkoder',
+    'https://kickback.no/rabattkode/morgenlevering',
+  ],
+  
+  // Kjæledyr
+  zooplus: [
+    'https://www.cuponation.no/zooplus-rabattkoder',
+    'https://kickback.no/rabattkode/zooplus',
+  ],
+  
+  // Reise
+  hotels: [
+    'https://www.cuponation.no/hotels-com-rabattkoder',
+    'https://kickback.no/rabattkode/hotels',
+  ],
+  colorline: [
+    'https://www.cuponation.no/color-line-rabattkoder',
+    'https://kickback.no/rabattkode/color-line',
+  ],
+  norwegian: [
+    'https://www.cuponation.no/norwegian-rabattkoder',
+    'https://kickback.no/rabattkode/norwegian',
+  ],
+  ving: [
+    'https://www.cuponation.no/ving-rabattkoder',
+    'https://kickback.no/rabattkode/ving',
+  ],
+  apollo: [
+    'https://www.cuponation.no/apollo-rabattkoder',
+    'https://kickback.no/rabattkode/apollo',
+  ],
+  dfds: [
+    'https://www.cuponation.no/dfds-rabattkoder',
+    'https://kickback.no/rabattkode/dfds',
+  ],
+  
+  // Bøker & media
+  adlibris: [
+    'https://www.cuponation.no/adlibris-rabattkoder',
+    'https://kickback.no/rabattkode/adlibris',
   ],
 };
 
