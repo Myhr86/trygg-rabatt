@@ -89,8 +89,8 @@ const Premium = () => {
         </Button>
 
         <div className="text-center mb-8">
-          <Badge variant="secondary" className="mb-3">
-            Premium
+          <Badge className="mb-3 bg-green-600 hover:bg-green-700">
+            14 dager gratis prøveperiode
           </Badge>
           <h1 className="text-3xl font-bold text-foreground mb-3">
             Slippe usikkerhet. Spare tid.
@@ -172,7 +172,7 @@ const Premium = () => {
                   {loadingPrice === STRIPE_PRICES.monthly.priceId ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   ) : null}
-                  Velg månedlig
+                  Prøv 14 dager gratis
                 </Button>
               </CardContent>
             </Card>
@@ -203,7 +203,7 @@ const Premium = () => {
                   {loadingPrice === STRIPE_PRICES.yearly.priceId ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   ) : null}
-                  Velg årlig
+                  Prøv 14 dager gratis
                 </Button>
               </CardContent>
             </Card>
@@ -212,7 +212,7 @@ const Premium = () => {
 
         {/* Trust note */}
         <p className="text-center text-sm text-muted-foreground">
-          Sikker betaling via Stripe. Avbryt når som helst.
+          Prøv 14 dager gratis. Ingen betaling før prøveperioden er over. Avbryt når som helst.
         </p>
       </main>
     </div>
