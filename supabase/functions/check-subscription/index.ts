@@ -63,19 +63,35 @@ serve(async (req) => {
       limit: 10,
     });
     
+    logStep("Raw subscriptions data", { 
+      count: subscriptions.data.length,
+      statuses: subscriptions.data.map((s: { id: string; status: string }) => ({ id: s.id, status: s.status }))
+    });
+    
     // Filter for active or trialing status
     const validSubscriptions = subscriptions.data.filter(
       (sub: { status: string }) => sub.status === 'active' || sub.status === 'trialing'
     );
 
     const hasActiveSub = validSubscriptions.length > 0;
-    let subscriptionEnd = null;
-    let billingInterval = null;
+    let subscriptionEnd: string | null = null;
+    let billingInterval: string | null = null;
 
     if (hasActiveSub) {
       const subscription = validSubscriptions[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      billingInterval = subscription.items.data[0]?.price?.recurring?.interval || null;
+      logStep("Processing subscription", { 
+        id: subscription.id,
+        status: subscription.status,
+        current_period_end: subscription.current_period_end,
+        current_period_end_type: typeof subscription.current_period_end
+      });
+      
+      // Handle the period end - it should be a Unix timestamp in seconds
+      if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
+        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      }
+      
+      billingInterval = subscription.items?.data?.[0]?.price?.recurring?.interval || null;
       logStep("Active/trial subscription found", { 
         subscriptionId: subscription.id, 
         status: subscription.status,
