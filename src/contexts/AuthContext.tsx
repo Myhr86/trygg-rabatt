@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -30,12 +30,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     subscriptionEnd: null,
     billingInterval: null,
   });
+  
+  // Track if we're currently checking subscription to prevent duplicate calls
+  const isCheckingRef = useRef(false);
+  const lastCheckRef = useRef<number>(0);
+  const MIN_CHECK_INTERVAL = 10000; // Minimum 10 seconds between checks
 
-  const checkSubscription = useCallback(async () => {
-    if (!session) {
+  const checkSubscription = async () => {
+    // Prevent duplicate/rapid calls
+    const now = Date.now();
+    if (isCheckingRef.current || now - lastCheckRef.current < MIN_CHECK_INTERVAL) {
+      return;
+    }
+
+    // Get current session
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    
+    if (!currentSession) {
       setSubscription({ subscribed: false, subscriptionEnd: null, billingInterval: null });
       return;
     }
+
+    isCheckingRef.current = true;
+    lastCheckRef.current = now;
 
     try {
       const { data, error } = await supabase.functions.invoke('check-subscription');
@@ -52,54 +69,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     } catch (err) {
       console.error('Failed to check subscription:', err);
+    } finally {
+      isCheckingRef.current = false;
     }
-  }, [session]);
+  };
 
   useEffect(() => {
-    // Set up auth state listener first
-    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+    let mounted = true;
 
-        // Check subscription after auth state changes (deferred)
-        if (session?.user) {
-          setTimeout(() => {
-            checkSubscription();
-          }, 0);
-        } else {
-          setSubscription({ subscribed: false, subscriptionEnd: null, billingInterval: null });
-        }
-      }
-    );
-
-    // Then check for existing session
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+      
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
 
       if (session?.user) {
-        setTimeout(() => {
-          checkSubscription();
-        }, 0);
+        checkSubscription();
       }
     });
 
-    return () => authSubscription.unsubscribe();
-  }, [checkSubscription]);
+    // Set up auth state listener
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (!mounted) return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
 
-  // Periodic subscription check (every minute)
+        if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+          // Small delay to avoid race conditions
+          setTimeout(() => {
+            if (mounted) checkSubscription();
+          }, 500);
+        } else if (!session) {
+          setSubscription({ subscribed: false, subscriptionEnd: null, billingInterval: null });
+        }
+      }
+    );
+
+    return () => {
+      mounted = false;
+      authSubscription.unsubscribe();
+    };
+  }, []);
+
+  // Periodic subscription check (every 2 minutes, not every minute)
   useEffect(() => {
     if (!session) return;
 
     const interval = setInterval(() => {
       checkSubscription();
-    }, 60000);
+    }, 120000); // 2 minutes
 
     return () => clearInterval(interval);
-  }, [session, checkSubscription]);
+  }, [session?.user?.id]); // Only re-run if user ID changes
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
